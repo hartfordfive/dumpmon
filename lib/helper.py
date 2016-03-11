@@ -69,3 +69,23 @@ def build_tweet(paste):
     if paste.num_emails > 0:
         print(paste.emails)
     return tweet
+    
+    
+ def dump_to_file(json_data,dump_site):
+    '''
+    Writes the obtained data to a text file
+    {
+    'pid' : paste.id,
+    'text' : paste.text,
+    'emails' : paste.emails,
+    'hashes' : paste.hashes,
+    'num_emails' : paste.num_emails,
+    'num_hashes' : paste.num_hashes,
+    'type' : paste.type,
+    'db_keywords' : paste.db_keywords,
+    'url' : paste.url
+    }
+    '''
+    with open("data_{0}.txt".format(dump_site), "a") as f:
+        line_item = "paste_id={0}, text={1}, emails={2}, hashes={3}, num_emails={4}, num_hashes={5}, type={6}, db_keywords={7}, paste_url={8}"
+        f.write(line_item)

@@ -44,12 +44,22 @@ def monitor():
     log_lock = threading.Lock()
     tweet_lock = threading.Lock()
 
+'''
     pastebin_thread = threading.Thread(
         target=Pastebin().monitor, args=[bot, tweet_lock])
     slexy_thread = threading.Thread(
         target=Slexy().monitor, args=[bot, tweet_lock])
     pastie_thead = threading.Thread(
         target=Pastie().monitor, args=[bot, tweet_lock])
+'''
+
+    pastebin_thread = threading.Thread(
+        target=Pastebin().monitor, args=[bot, tweet_lock])
+    slexy_thread = threading.Thread(
+        target=Slexy().monitor, args=[bot, tweet_lock])
+    pastie_thead = threading.Thread(
+        target=Pastie().monitor, args=[bot, tweet_lock])
+
 
     for thread in (pastebin_thread, slexy_thread, pastie_thead):
         thread.daemon = True

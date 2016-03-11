@@ -67,7 +67,8 @@ class Site(object):
     def list(self):
         print('\n'.join(url for url in self.queue))
 
-    def monitor(self, bot, t_lock):
+    #def monitor(self, bot, t_lock):
+    monitor(self, **kwargs): 
         self.update()
         while(1):
             while not self.empty():
@@ -75,26 +76,50 @@ class Site(object):
                 self.ref_id = paste.id
                 logging.info('[*] Checking ' + paste.url)
                 paste.text = self.get_paste_text(paste)
-                tweet = helper.build_tweet(paste)
-                if tweet:
-                    logging.info(tweet)
-                    with t_lock:
-                        if USE_DB:
-                            self.db_client.save({
-                                'pid' : paste.id,
-                                'text' : paste.text,
-                                'emails' : paste.emails,
-                                'hashes' : paste.hashes,
-                                'num_emails' : paste.num_emails,
-                                'num_hashes' : paste.num_hashes,
-                                'type' : paste.type,
-                                'db_keywords' : paste.db_keywords,
-                                'url' : paste.url
-                               })
-                        try:
-                            bot.statuses.update(status=tweet)
-                        except TwitterError:
-                            pass
+                
+                if USE_TWITTER:
+                    tweet = helper.build_tweet(paste)
+                    if tweet:
+                        logging.info(tweet)
+                        with t_lock:
+                            if USE_DB:
+                                self.db_client.save({
+                                    'pid' : paste.id,
+                                    'text' : paste.text,
+                                    'emails' : paste.emails,
+                                    'hashes' : paste.hashes,
+                                    'num_emails' : paste.num_emails,
+                                    'num_hashes' : paste.num_hashes,
+                                    'type' : paste.type,
+                                    'db_keywords' : paste.db_keywords,
+                                    'url' : paste.url
+                                  })
+                            try:
+                                bot.statuses.update(status=tweet)
+                            except TwitterError:
+                                pass
+                else:
+                  if self.BASE_URL == "http://pastebin.com" :
+                    site = 'pastebin'
+                   else if self.BASE_URL == "http://pastie.org" :
+                     site = 'pastie'
+                   else if  self.BASE_URL == "http://slexy.org" :
+                     site = 'slexy'
+                        
+                  dump_to_file({
+                  'pid' : paste.id,
+                  'text' : paste.text,
+                  'emails' : paste.emails,
+                  'hashes' : paste.hashes,
+                  'num_emails' : paste.num_emails,
+                  'num_hashes' : paste.num_hashes,
+                  'type' : paste.type,
+                  'db_keywords' : paste.db_keywords,
+                  'url' : paste.url
+                  }, site)
+                 
+                 
+                 
             self.update()
             while self.empty():
                 logging.debug('[*] No results... sleeping')
